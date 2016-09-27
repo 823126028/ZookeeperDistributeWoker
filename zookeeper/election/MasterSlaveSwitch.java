@@ -35,6 +35,7 @@ public class MasterSlaveSwitch {
 				if(state == KeeperState.Disconnected){
 					return;
 				}
+				//重新连上
 				String nowActiveIp = animal.getData(path);
 				if(activeOwner()){
 					if(!sameKey(nowActiveIp)){
@@ -53,13 +54,12 @@ public class MasterSlaveSwitch {
 			@Override
 			public void handleDataDeleted(String dataPath) throws Exception {
 				if(activeOwner()){
-					activeIP = null;
 					doAfterRelease.run();
-				}else{
-					activeIP = null;
-					animal.createEphemeral(path, animal.key(), true);
 				}
+				activeIP = null;
+				animal.createEphemeral(path, animal.key(), true);
 			}
+			
 			@Override
 			public void handleDataChange(String dataPath, Object data) throws Exception {
 					String nowActiveIP = new String((byte[])data);
